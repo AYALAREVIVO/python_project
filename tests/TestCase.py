@@ -1,0 +1,51 @@
+# from selenium.webdriver.common import keys
+import pytest
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+from xml.dom import minidom
+import pages.SearchPage
+@pytest.fixture(scope="class")
+def setup(request):
+    driver = webdriver.Chrome(ChromeDriverManager().install())
+    driver.maximize_window()
+    driver.get('https://www.w3schools.com/html/html_tables.asp')
+    request.cls.driver = driver
+    yield driver
+    driver.close()
+@pytest.mark.usefixtures("setup")
+class TestCase:
+    def test_main(self):
+        try:
+            file = minidom.parse('data.xml')
+        except:
+            root = minidom.Document()
+
+            xml = root.createElement('data')
+            root.appendChild(xml)
+
+            productChild = root.createElement('searches')
+
+            xml.appendChild(productChild)
+
+            xml_str = root.toprettyxml(indent="\t")
+
+            save_path_file = "data.xml"
+
+            with open(save_path_file, "w") as f:
+                f.write(xml_str)
+
+
+        for i in range(len(file.getElementsByTagName('search'))):
+            returnColumnText = file.getElementsByTagName('returnColumnText')[i].firstChild.data
+            searchText=file.getElementsByTagName('searchText')[i].firstChild.data
+            searchColum=file.getElementsByTagName('searchColumn')[i].firstChild.data
+            expectedText=file.getElementsByTagName('expectedText')[i].firstChild.data
+
+            ps=pages.SearchPage.SearchPage()
+            ps.verifyTableCellText(self.driver,searchColum,searchText   ,returnColumnText,expectedText)
+            if(ps.verifyTableCellText(self.driver,searchColum,searchText,returnColumnText,expectedText)==True):
+                print(ps.getTableCellTextByXpath(self.driver,searchColum,searchText,returnColumnText))
+
+
+
