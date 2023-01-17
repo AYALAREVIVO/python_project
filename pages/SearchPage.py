@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 
 
 class SearchPage:
+    #function that checks whether the data returned from the web page matches the data that should have been returned
 
     def verifyTableCellText(self, table, searchColumn,
                             searchText, returnColumnText, expectedText):
@@ -10,6 +11,7 @@ class SearchPage:
             return True
         except:
             return False
+    #function that retrieves data from web according to XPATH
 
     def getTableCellTextByXpath(self, table, searchColumn, searchText, returnColumnText):
         try:
