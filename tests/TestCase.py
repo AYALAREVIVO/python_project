@@ -1,4 +1,3 @@
-# from selenium.webdriver.common import keys
 import pytest
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -17,8 +16,10 @@ def setup(request):
 class TestCase:
     def test_main(self):
         try:
+             # try to open file xml
             file = minidom.parse('data.xml')
         except:
+            #create base file xml
             root = minidom.Document()
 
             xml = root.createElement('data')
@@ -35,16 +36,20 @@ class TestCase:
             with open(save_path_file, "w") as f:
                 f.write(xml_str)
 
+            #Fetching from the website based on data on the XML page
 
         for i in range(len(file.getElementsByTagName('search'))):
             returnColumnText = file.getElementsByTagName('returnColumnText')[i].firstChild.data
             searchText=file.getElementsByTagName('searchText')[i].firstChild.data
             searchColum=file.getElementsByTagName('searchColumn')[i].firstChild.data
             expectedText=file.getElementsByTagName('expectedText')[i].firstChild.data
+            #Creating an object of type SearchPage
 
             ps=pages.SearchPage.SearchPage()
-            ps.verifyTableCellText(self.driver,searchColum,searchText   ,returnColumnText,expectedText)
+              #Checking whether the incoming data is correct
+
             if(ps.verifyTableCellText(self.driver,searchColum,searchText,returnColumnText,expectedText)==True):
+                 #Printing the correct data
                 print(ps.getTableCellTextByXpath(self.driver,searchColum,searchText,returnColumnText))
 
 
